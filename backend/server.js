@@ -3,9 +3,10 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./src/config/database');
 
-
+// Load env vars
 dotenv.config();
-// database connection
+
+// Connect to database
 connectDB();
 
 const app = require('./src/app');
