@@ -1,87 +1,13 @@
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
+const ErrorResponse = require('../utils/errorResponse'); // Ensure this exists
+const catchAsync = require('../utils/catchAsync');
+const generateToken = require('../utils/generateToken');
 
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE,
-    });
-};
-
-exports.register = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        console.log(errors)
-
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ success: false, errors: errors.array() });
-        }
-        const { name, email, password } = req.body;
-        console.log(name, email)
-
-        // Check if user exists
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({
-                success: false,
-                message: 'User already exists',
-            });
-        }
-
-        // Create user
-        const user = await User.create({
-            name,
-            email,
-            password,
-        });
-
-        sendTokenResponse(user, 201, res);
-    } catch (error) {
-        next(error);
-    }
-};
-
-
-exports.login = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ success: false, errors: errors.array() });
-        }
-
-        const { email, password } = req.body;
-        console.log(email, password)
-
-        // Check for user is exist or not
-        const user = await User.findOne({ email }).select('+password');
-        console.log(user)
-
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials',
-            });
-        }
-
-        // Check password
-        const isMatch = await user.matchPassword(password);
-
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials',
-            });
-        }
-
-        sendTokenResponse(user, 200, res);
-    } catch (error) {
-        next(error);
-    }
-};
-
+/**
+ * @desc    Helper to format response and send token
+ */
 const sendTokenResponse = (user, statusCode, res) => {
     const token = generateToken(user._id);
-
     res.status(statusCode).json({
         success: true,
         token,
@@ -93,14 +19,54 @@ const sendTokenResponse = (user, statusCode, res) => {
     });
 };
 
-exports.getMe = async (req, res, next) => {
-    try {
-        const user = await User.findById(req.user.id);
-        res.status(200).json({
-            success: true,
-            data: user,
-        });
-    } catch (error) {
-        next(error);
+// @desc    Register user
+// @route   POST /api/auth/register
+exports.register = catchAsync(async (req, res, next) => {
+    const { name, email, password } = req.body;
+
+    // Check if user exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        return next(new ErrorResponse('User already exists', 400));
     }
-};
+
+    const user = await User.create({
+        name,
+        email,
+        password,
+    });
+
+    sendTokenResponse(user, 201, res);
+});
+
+// @desc    Login user
+// @route   POST /api/auth/login
+exports.login = catchAsync(async (req, res, next) => {
+    const { email, password } = req.body;
+
+    // Check for user and include password field
+    const user = await User.findOne({ email }).select('+password');
+
+    // Generic error for both "no user" and "wrong password" (Security best practice)
+    if (!user || !(await user.matchPassword(password))) {
+        return next(new ErrorResponse('Invalid credentials', 401));
+    }
+
+    sendTokenResponse(user, 200, res);
+});
+
+// @desc    Get current logged in user
+// @route   GET /api/auth/me
+exports.getMe = catchAsync(async (req, res, next) => {
+    // req.user.id comes from the 'protect' middleware
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+        return next(new ErrorResponse('User not found', 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        data: user,
+    });
+});
