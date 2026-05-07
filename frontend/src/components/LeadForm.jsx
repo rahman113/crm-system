@@ -39,7 +39,6 @@ const LeadForm = ({ lead, onSubmit, onCancel, error: propError }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Client-side validation
         if (!formData.name.trim()) {
             setLocalError('Name is required');
             return;
@@ -62,8 +61,6 @@ const LeadForm = ({ lead, onSubmit, onCancel, error: propError }) => {
             setLocalError('Please enter a valid 10-digit phone number');
             return;
         }
-
-        // Proceed with submission
         await onSubmit(formData);
     };
 
