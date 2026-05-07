@@ -11,11 +11,13 @@ const generateToken = (id) => {
 exports.register = async (req, res, next) => {
     try {
         const errors = validationResult(req);
+        console.log(errors)
+
         if (!errors.isEmpty()) {
             return res.status(400).json({ success: false, errors: errors.array() });
         }
-
         const { name, email, password } = req.body;
+        console.log(name, email)
 
         // Check if user exists
         const userExists = await User.findOne({ email });
@@ -48,9 +50,11 @@ exports.login = async (req, res, next) => {
         }
 
         const { email, password } = req.body;
+        console.log(email, password)
 
-        // Check for user
+        // Check for user is exist or not
         const user = await User.findOne({ email }).select('+password');
+        console.log(user)
 
         if (!user) {
             return res.status(401).json({
