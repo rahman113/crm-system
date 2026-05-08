@@ -48,10 +48,8 @@ exports.createLead = catchAsync(async (req, res, next) => {
 
     // Add user to req.body
     req.body.user = req.user.id;
-
     const lead = await Lead.create(req.body);
     console.log("lead", lead);
-
     res.status(201).json({
         success: true,
         data: lead,

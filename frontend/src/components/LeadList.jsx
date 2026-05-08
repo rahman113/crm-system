@@ -37,15 +37,14 @@ const LeadList = () => {
                 // Update existing lead
                 const response = await updateLead(editingLead._id, leadData);
                 if (response.data.success) {
-                    await fetchLeads(); // Refresh the list
+                    await fetchLeads();
                     setShowForm(false);
                     setEditingLead(null);
                 }
             } else {
-                // Create new lead
                 const response = await createLead(leadData);
                 if (response.data.success) {
-                    await fetchLeads(); // Refresh the list
+                    await fetchLeads();
                     setShowForm(false);
                 }
             }
@@ -55,7 +54,6 @@ const LeadList = () => {
                 error.response?.data?.message ||
                 'Failed to save lead';
             setFormError(errorMessage);
-            // Don't close the form on error
         }
     };
 
@@ -63,7 +61,7 @@ const LeadList = () => {
         if (window.confirm('Are you sure you want to delete this lead?')) {
             try {
                 await deleteLead(id);
-                await fetchLeads(); // Refresh the list
+                await fetchLeads();
             } catch (error) {
                 setError(error.response?.data?.message || 'Failed to delete lead');
             }

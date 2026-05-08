@@ -32,7 +32,6 @@ const LeadForm = ({ lead, onSubmit, onCancel, error: propError }) => {
             ...formData,
             [e.target.name]: e.target.value,
         });
-        // Clear error when user starts typing
         setLocalError('');
     };
 

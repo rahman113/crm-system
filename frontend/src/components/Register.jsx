@@ -9,7 +9,7 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [localError, setLocalError] = useState('');
-    const [successMsg, setSuccessMsg] = useState(''); // New state for success message
+    const [successMsg, setSuccessMsg] = useState('');
     const { register, error } = useAuth();
     const navigate = useNavigate();
 
@@ -27,7 +27,6 @@ const Register = () => {
 
         if (success) {
             setSuccessMsg('Registration successful! Please login.');
-            // Wait 2 seconds so they can read the message, then go to login
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
@@ -38,8 +37,6 @@ const Register = () => {
         <div className="container">
             <div className="form-container">
                 <h2>Register for CRM</h2>
-
-                {/* Show success message if registration worked */}
                 {successMsg && <div className="success-message" style={{ color: 'green', textAlign: 'center', marginBottom: '10px' }}>{successMsg}</div>}
 
                 {(error || localError) && <div className="error-message">{error || localError}</div>}
