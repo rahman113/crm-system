@@ -262,6 +262,31 @@ button:disabled {
   background: #fdfdfd;
 }
 
+/* --- NEW: FIX FOR COLLAPSING BUTTONS --- */
+.leads-table td:last-child {
+  display: flex;
+  gap: 10px;
+  /* Space between Edit and Delete */
+  align-items: center;
+  white-space: nowrap;
+  /* Keeps buttons on one line */
+}
+
+.leads-table td button {
+  width: auto;
+  /* Overrides the global width: 100% */
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.btn-delete {
+  background: var(--danger-color);
+}
+
+.btn-delete:hover {
+  background: #c53030;
+}
+
 /* --- Badges --- */
 .status-badge {
   padding: 6px 12px;

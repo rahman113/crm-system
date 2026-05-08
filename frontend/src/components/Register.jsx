@@ -9,6 +9,7 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [localError, setLocalError] = useState('');
+    const [successMsg, setSuccessMsg] = useState(''); // New state for success message
     const { register, error } = useAuth();
     const navigate = useNavigate();
 
@@ -20,10 +21,16 @@ const Register = () => {
         }
         setLocalError('');
         setLoading(true);
+
         const success = await register(name, email, password);
         setLoading(false);
+
         if (success) {
-            navigate('/dashboard');
+            setSuccessMsg('Registration successful! Please login.');
+            // Wait 2 seconds so they can read the message, then go to login
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         }
     };
 
@@ -31,7 +38,12 @@ const Register = () => {
         <div className="container">
             <div className="form-container">
                 <h2>Register for CRM</h2>
+
+                {/* Show success message if registration worked */}
+                {successMsg && <div className="success-message" style={{ color: 'green', textAlign: 'center', marginBottom: '10px' }}>{successMsg}</div>}
+
                 {(error || localError) && <div className="error-message">{error || localError}</div>}
+
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Name</label>
@@ -69,11 +81,11 @@ const Register = () => {
                             required
                         />
                     </div>
-                    <button type="submit" disabled={loading}>
+                    <button type="submit" disabled={loading || successMsg}>
                         {loading ? 'Registering...' : 'Register'}
                     </button>
                 </form>
-                <p>
+                <p style={{ marginTop: '15px', textAlign: 'center' }}>
                     Already have an account? <Link to="/login">Login</Link>
                 </p>
             </div>

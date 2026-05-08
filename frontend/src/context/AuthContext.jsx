@@ -37,11 +37,14 @@ export const AuthProvider = ({ children }) => {
     const register = async (name, email, password) => {
         try {
             setError(null);
-            const response = await registerService({ name, email, password });
-            const { token, user } = response.data;
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            setUser(user);
+            // We still call the service to create the user in the database
+            await registerService({ name, email, password });
+
+            /** * FIX: Removed the logic that sets the token and user state.
+             * This prevents the app from thinking the user is logged in 
+             * immediately after the API call succeeds.
+             */
+
             return true;
         } catch (error) {
             setError(error.response?.data?.message || 'Registration failed');
