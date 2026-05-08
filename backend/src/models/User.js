@@ -34,11 +34,6 @@ const UserSchema = new mongoose.Schema({
         select: false,
         validate: {
             validator: function (v) {
-                // Password must contain at least:
-                // - 1 uppercase letter
-                // - 1 lowercase letter  
-                // - 1 number
-                // - 1 special character
                 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
                 return passwordRegex.test(v);
             },
@@ -67,20 +62,16 @@ UserSchema.pre('save', async function (next) {
     }
 
     try {
-        const salt = await bcrypt.genSalt(12); // Increased salt rounds for better security
+        const salt = await bcrypt.genSalt(12);
         this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
         next(error);
     }
 });
-
-// Match user entered password to hashed password in database
 UserSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
-
-// Method to check if password meets requirements (for additional validation)
 UserSchema.statics.isPasswordStrong = function (password) {
     const requirements = {
         minLength: password.length >= 8,
@@ -97,8 +88,6 @@ UserSchema.statics.isPasswordStrong = function (password) {
         requirements,
     };
 };
-
-// Method to sanitize user object (remove sensitive data)
 UserSchema.methods.toJSON = function () {
     const user = this.toObject();
     delete user.password;

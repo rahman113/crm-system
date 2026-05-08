@@ -1,11 +1,8 @@
 const User = require('../models/User');
-const ErrorResponse = require('../utils/errorResponse'); // Ensure this exists
+const ErrorResponse = require('../utils/errorResponse');
 const catchAsync = require('../utils/catchAsync');
 const generateToken = require('../utils/generateToken');
 
-/**
- * @desc    Helper to format response and send token
- */
 const sendTokenResponse = (user, statusCode, res) => {
     const token = generateToken(user._id);
     res.status(statusCode).json({
@@ -19,8 +16,6 @@ const sendTokenResponse = (user, statusCode, res) => {
     });
 };
 
-// @desc    Register user
-// @route   POST /api/auth/register
 exports.register = catchAsync(async (req, res, next) => {
     const { name, email, password } = req.body;
 
@@ -39,15 +34,11 @@ exports.register = catchAsync(async (req, res, next) => {
     sendTokenResponse(user, 201, res);
 });
 
-// @desc    Login user
-// @route   POST /api/auth/login
 exports.login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
 
     // Check for user and include password field
     const user = await User.findOne({ email }).select('+password');
-
-    // Generic error for both "no user" and "wrong password" (Security best practice)
     if (!user || !(await user.matchPassword(password))) {
         return next(new ErrorResponse('Invalid credentials', 401));
     }
@@ -55,10 +46,7 @@ exports.login = catchAsync(async (req, res, next) => {
     sendTokenResponse(user, 200, res);
 });
 
-// @desc    Get current logged in user
-// @route   GET /api/auth/me
 exports.getMe = catchAsync(async (req, res, next) => {
-    // req.user.id comes from the 'protect' middleware
     const user = await User.findById(req.user.id);
 
     if (!user) {

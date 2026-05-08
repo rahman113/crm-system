@@ -7,7 +7,6 @@ const leadRoutes = require('./routes/leadRoutes');
 const healthRoutes = require('./routes/healthRoutes');
 const errorMiddleware = require('./middleware/errorMiddleware');
 
-// Import logger and rate limiters
 const logger = require('./utils/logger');
 const morganLogger = require('./middleware/morganLogger');
 const {

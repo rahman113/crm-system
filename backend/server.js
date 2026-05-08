@@ -54,12 +54,10 @@ process.on('uncaughtException', (err) => {
     });
 });
 
-// Handle SIGTERM (e.g., from Kubernetes or systemd)
 process.on('SIGTERM', () => {
     logger.info('SIGTERM signal received: closing HTTP server');
     server.close(() => {
         logger.info('HTTP server closed');
-        // Close database connection
         const mongoose = require('mongoose');
         mongoose.connection.close(false, () => {
             logger.info('Database connection closed');
@@ -67,13 +65,10 @@ process.on('SIGTERM', () => {
         });
     });
 });
-
-// Handle SIGINT (Ctrl+C)
 process.on('SIGINT', () => {
     logger.info('SIGINT signal received: closing HTTP server');
     server.close(() => {
         logger.info('HTTP server closed');
-        // Close database connection
         const mongoose = require('mongoose');
         mongoose.connection.close(false, () => {
             logger.info('Database connection closed');
@@ -81,8 +76,6 @@ process.on('SIGINT', () => {
         });
     });
 });
-
-// Log when server is about to close
 server.on('close', () => {
     logger.info('Server closing...');
 });
