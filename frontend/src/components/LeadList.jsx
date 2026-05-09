@@ -24,11 +24,9 @@ const LeadList = () => {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchLeads();
     }, [statusFilter]);
-
     const handleSaveLead = async (leadData) => {
         try {
             setFormError('');
