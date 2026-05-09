@@ -46,7 +46,7 @@ const LeadForm = ({ lead, onSubmit, onCancel, error: propError }) => {
             setLocalError('Email is required');
             return;
         }
-        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
         if (!emailRegex.test(formData.email)) {
             setLocalError('Please enter a valid email address');
             return;
