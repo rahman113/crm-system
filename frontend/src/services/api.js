@@ -39,18 +39,18 @@ api.interceptors.response.use(
 );
 
 // Auth services
-export const register = (userData) => api.post('/auth/register', userData);
-export const login = (userData) => api.post('/auth/login', userData);
-export const getCurrentUser = () => api.get('/auth/me');
+export const register = (userData) => api.post('/api/auth/register', userData);
+export const login = (userData) => api.post('/api/auth/login', userData);
+export const getCurrentUser = () => api.get('/api/auth/me');
 
 // Lead services
 export const getLeads = (statusFilter = '') => {
-    const url = statusFilter ? `/leads?status=${statusFilter}` : '/leads';
+    const url = statusFilter ? `/api/leads?status=${statusFilter}` : '/api/leads';
     return api.get(url);
 };
-export const getLead = (id) => api.get(`/leads/${id}`);
-export const createLead = (leadData) => api.post('/leads', leadData);
-export const updateLead = (id, leadData) => api.put(`/leads/${id}`, leadData);
-export const deleteLead = (id) => api.delete(`/leads/${id}`);
+export const getLead = (id) => api.get(`/api/leads/${id}`);
+export const createLead = (leadData) => api.post('/api/leads', leadData);
+export const updateLead = (id, leadData) => api.put(`/api/leads/${id}`, leadData);
+export const deleteLead = (id) => api.delete(`/api/leads/${id}`);
 
 export default api;
